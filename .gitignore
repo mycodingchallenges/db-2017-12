@@ -1,6 +1,9 @@
+### Gradle ###
 .gradle
 /build/
-!gradle/wrapper/gradle-wrapper.jar
+/gradle/
+/gradlew
+/gradlew.bat
 
 ### STS ###
 .apt_generated
@@ -23,3 +26,7 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+### Generated documentation ###
+User-Guide.html
+Developer-Guide.html

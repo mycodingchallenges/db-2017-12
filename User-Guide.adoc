@@ -1,0 +1,150 @@
+= User Guide
+:icons: font
+:blank: pass:[ +]
+:sectnums:
+:sectnumlevels: 4
+:toclevels: 3
+:toc:
+
+== Endpoints
+
+=== Creating an account
+
+This endpoint creates a new account in the system.
+
+.Sample `curl` command
+[source,sh]
+----
+$ curl -s \
+-X POST \
+-H 'Content-Type: application/json' \
+-d '{"accountId":"Id-123","balance":123.45}' \
+http://localhost:18080/v1/accounts
+----
+
+.Responses
+|===
+|Status            |Reason(s)
+
+|201 (CREATED)
+|Account created successfully
+
+|400 (BAD REQUEST)
+a| * An account with the given id already exists
+ * Account id is not specified in the request
+ * Account id specified in the request is an empty string
+ * Account balance is not specified in the request
+ * Balance specified in the request is negative
+|===
+
+=== Get account details
+
+This endpoint returns details of an account existing in the system.
+
+.Sample `curl` command
+[source,sh]
+----
+$ curl -s \
+-X GET \
+-H 'Content-Type: application/json' \
+http://localhost:18080/v1/accounts/Id-123
+----
+
+.Sample response
+[source,json]
+----
+{
+    "accountId": "Id-123",
+    "balance": 123.45
+}
+----
+
+[NOTE]
+An empty string is returned if there does not exist any account with the given account id.
+
+.Responses
+|===
+|Status            |Reason(s)
+
+|200 (OKAY)
+|Account details were successfully returned
+|===
+
+=== Transfer money from one account to another
+
+This endpoint transfers an amount from one existing account to another existing account in the system.
+
+[NOTE]
+The system supports concurrent transfers.
+
+[NOTE]
+If an error occurs after deducting from the source account
+and while crediting to the destination account,
+the amount is credited back to the source account.
+
+.Sample `curl` command
+[source,sh]
+----
+$ curl -s \
+-X PATCH \
+-H 'Content-Type: application/json' \
+'http://localhost:18080/v1/accounts/transferMoney?sourceAccountId=Id-123&destinationAccountId=Id-456&amount=99.5'
+----
+
+.Sample response
+[source,json]
+----
+{
+    "sourceAccountId":"Id-123",
+    "destinationAccountId":"Id-456",
+    "amount":"99.5",
+    "sourceAccountBalanceNew":"23.95", <1>
+    "destinationAccountBalanceNew":"144.0" <2>
+}
+----
+<1> Balance of the source account after the transfer completed successfully.
+<2> Balance of the destination account after the transfer completed successfully.
+
+.Responses
+|===
+|Status            |Reason(s)
+
+|200 (OKAY)
+|Money transferred successfully
+
+|400 (BAD REQUEST)
+a| * Source account id is not specified in the request
+ * Destination account id is not specified in the request
+ * Account id specified in the request is a blank or empty string
+ * Source account does not exist
+ * Destination account does not exist
+ * Amount is not specified in the request
+ * Amount specified in the request is zero or negative
+ * Amount is greater than source account's balance
+ * Content type specified in the request is wrong
+|===
+
+== Configuration
+
+=== Server Port
+
+By default, the server will listen at port `18080`. +
+To set a different listen port, say `8085`, for the server, set the following property:
+
+.application.yml
+[source, yaml]
+----
+server.port: 8085
+----
+
+
+=== Logs
+
+To enable `DEBUG` logs, set the following property in application configuration:
+
+.application.yml
+[source, yaml]
+----
+logging.level:
+  com.db.awmd.challenge: DEBUG
+----

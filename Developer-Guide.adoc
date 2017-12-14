@@ -1,0 +1,35 @@
+= Developer Guide
+:icons: font
+:blank: pass:[ +]
+:sectnums:
+:sectnumlevels: 4
+:toclevels: 3
+:toc:
+
+== Production readiness
+
+Complete the following items before deploying the application to production:
+
+. Authentication and Authorization
+. TLS/SSL
+. Use Checkstyle, Findbugs, JaCoCo and SonarQube to improve code quality
+. Create Jenkins pipeline
+. Add LICENSE file to the source repository
+. Publish artifacts to Maven repository
+
+
+== Roadmap
+
+Add following features to the application after the first release:
+
+. Publish custom metrics
+. Distributed tracing
+. Docker image, Kubernetes manifests and Helm charts
+
+
+== Tips
+
+. Avoiding using `double` and `float` for amounts +
+  Use of `double` or `float` results in loss of precision.
+  These primitive types cannot represent all numbers exactly.
+  Hence, use `java.math.BigDecimal` to represent amounts.
